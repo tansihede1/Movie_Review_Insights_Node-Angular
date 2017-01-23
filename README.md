@@ -1,24 +1,51 @@
-# Node Todo App
+# Movie Review Insights
 
-A Node app built with MongoDB and Angular. For demonstration purposes and a tutorial.
+A Movie Review Insights is built with node.js,Angular,jQuery and IBM Watson Personality Insights Service, For demonstration purposes and a tutorial.
 
-Node provides the RESTful API. Angular provides the frontend and accesses the API. MongoDB stores like a hoarder.
+Node provides the RESTful API. Angular provides the frontend and accesses the API.
+
+
+##Personality Insights service 
+
+The IBM Watson Personality Insights service uses linguistic analysis to extract cognitive and social characteristics from input text such as email, text messages, tweets, forum posts, and more. By deriving cognitive and social preferences, the service helps users to understand, connect to, and communicate with other people on a more personalized level.
 
 ## Requirements
 
 - [Node and npm](http://nodejs.org)
 
-## Installation
+##Running locally
 
-1. Clone the repository: `git clone git@github.com:scotch-io/node-todo`
-2. Install the application: `npm install`
-3. Start the server: `node server.js`
-4. View in browser at `http://localhost:8080`
+The application uses Node.js and npm so you will have to download and install them as part of the steps below.
 
-## Tutorial Series
+	1.Clone the repository: `https://github.com/tansihede1/Movie_Review_Insights_Node-Angular`
+	2.Copy the credentials from your personality-insights-service service in Bluemix to credentials.json, you can see the credentials using:
 
-This repo corresponds to the [Node Todo Tutorial Series](http://scotch.io/series/node-and-angular-to-do-app) on [scotch.io](http://scotch.io)
+    $ cf env <application-name>
 
-Happy Todo-ing!
+    Example output:
 
-![Todo-aholic](http://i.imgur.com/ikyqgrn.png)
+    System-Provided:
+    {
+    "VCAP_SERVICES": {
+      "personality_insights": [{
+          "credentials": {
+            "url": "<url>",
+            "password": "<password>",
+            "username": "<username>"
+          },
+        "label": "personality_insights",
+        "name": "personality-insights-service",
+        "plan": "IBM Watson Personality Insights Monthly Plan"
+     }]
+    }
+    }
+
+    3. You need to copy username, password and url.
+    4. Install Node.js
+    5. Go to the project folder in a terminal and run: npm install
+    6. Start the application
+      npm start
+    7. Go to http://localhost:3004
+
+
+![Movie Review Insights](http://imgur.com/a/2H0Sk)
