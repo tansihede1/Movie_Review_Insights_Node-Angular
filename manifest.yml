@@ -1,0 +1,18 @@
+---
+declared-services:
+  Personality Insights-bc:
+    label: personality_insights
+    plan: tiered
+
+applications:
+- name: Movie_Review_PersonalityInsights
+  host: PersonalityInsightsMovie
+  command: npm start
+  path: .
+  memory: 512M
+  instances: 1
+  disk_quota: 1024M
+  services:
+  - Personality Insights-bc
+
+  

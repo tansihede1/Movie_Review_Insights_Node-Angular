@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="scotchTodo">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" type="image/png" href="Tone.png"/>
+    <title>Movie Review Insights</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/blog-post.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+	<!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular-messages.js"></script>-->
+    <script src="core.js"></script>
+</head>
+
+<body ng-controller="mainController">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!--<a class="navbar-brand" href="#">Movie </a>-->
+				<img src="film-review-logo.png" class="img-responsive" alt="Cinque Terre" >
+				
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <!--<ul class="nav navbar-nav">
+                    <li>
+                        <a href="https://www.ibm.com/watson/developercloud/doc/personality-insights/">About</a>
+                    </li>
+                </ul>-->
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+     
+            <div class="col-lg-8">
+
+               <h1>Movie Review Insights</h1>
+
+                <!-- Author -->
+                <p class="lead">
+                   powered by <a  href="https://www.ibm.com/watson/developercloud/doc/personality-insights/">IBM Watson Personality Insights</a>
+                </p>
+              <hr>
+
+                 <div class="well">
+					<h4>Enter text written by the person whose personality you're interested in <h5>(100 words min)</h5> </h4>
+                    <form role="form" name="myForm">
+                        <div class="form-group">
+                            <textarea class="form-control" name="mydata" rows="3" ng-model="formData.text" ng-minlength="100"
+           required></textarea>
+                     <p ng-show="myForm.mydata.$error.minlength" class="help-block">Enter more then 100 words.</p> 
+					<p ng-show="myForm.mydata.$error.required && !myForm.mydata.$pristine" class="help-block">Text cannot be empty.</p>
+					
+							<div ng-show="word_count_message" style="color:red">{{ word_count_message }}</div>		
+							<div ng-hide="word_count_message"><div ng-if="!word_count_message">{{ word_count }} Words Analyzed</div></div>
+							
+						</div>
+						
+              <button type="submit" class="btn btn-primary" ng-click="createTodo()" ng-disabled="myForm.mydata.$error.required || myForm.mydata.$error.minlength">Submit</button>
+    
+				 </form>
+                </div>
+
+               <hr>
+				   
+                <!-- Posted Comments -->
+
+                <!-- Comment -->
+                <div class="media" ng-show="resultbulk">
+                    <a class="pull-left" href="#">
+                        <img class="media-object" src="http://placehold.it/64x64" alt="">
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">Summary
+                            <small>{{AssignedDate.now() | date:'dd-MM-yyyy HH:mm:ss'}}</small>
+							
+							
+							
+                        </h4>
+                        {{open1}} and {{open2}} has shown highest amount of {{open}} where as {{consious1}} and {{consious2}} has shown highest amount of {{consious}} .
+						{{neuro1}} is leading in {{neuro}} where as highest {{aggreable}} is shown in {{aggreable1}} and {{aggreable2}}.
+						{{extraversion}} is found topmost in {{extraversion1}}
+                    </div>
+                </div>
+ 
+
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            <div class="col-md-4">
+
+                <!-- Blog Search Well -->
+                <div class="well">
+                    <h4>Movie Search</h4>
+                    <div class="input-group">
+						<select data-ng-model="movie"  class="form-control" data-ng-options="option for option in movies" >
+	<option value=''>Select Movie name</option>
+    </select>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"  ng-click="getValue()" ng-disabled="!movie">
+                                <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                        </span>
+                    </div>
+                    <!-- /.input-group -->
+                </div>
+
+                <!-- Blog Categories Well -->
+                <div class="well">
+                    <h4>Author Categories</h4>
+                    <div class="row">
+				      <div class="col-lg-6">
+           <select data-ng-model="option1" class="form-control" data-ng-options="option for option in options1" data-ng-change="getOptions2()">
+		<option value=''>Select Movie </option>
+    </select> </div>
+						
+                        <div class="col-lg-6">
+              <select data-ng-model="option2" class="form-control" data-ng-options="option for option in options2" ><option value=''>Select Author</option>
+    </select>
+         </div>
+									
+                  </div>
+					</br>
+					<div class="row"><div class="col-lg-6">
+					<span class="input-group-btn">
+                            <button class="btn btn-default" type="button"  ng-click="getReview()" ng-disabled="!option1 || !option2">
+                                <span class="glyphicon glyphicon-search"></span>
+                        </button>
+						</span></div></div>
+<!-- /.row -->
+					
+					
+					
+                    <!-- /.row -->
+                </div>
+
+                <!-- Side Widget Well -->
+                <div class="well">
+                    <h4>Click to view Movie Reviews Insights</h4>
+                      <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"  ng-click="createTodobulk()">
+                                <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                        </span>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+                 
+
+	
+		            <div class="row" ng-show="select1">
+					 <div class="col-md-9">
+						<div id="container" ng-controller="mainController" ng-show="select1">Placeholder for chart</div>
+						</div>
+		          </div>
+      		
+		            <div class="row" ng-show="resulttext">
+					 <div class="col-md-4">
+						<div id="container1" ng-controller="mainController" ng-show="resulttext">Placeholder for chart</div></div>
+					<div class="col-md-4">
+						<div id="container2" ng-controller="mainController" ng-show="resulttext">Placeholder for chart</div></div>
+					<div class="col-md-4">
+						<div id="container3" ng-controller="mainController" ng-show="resulttext">Placeholder for chart</div></div>
+		          </div>
+		
+		
+		              
+		           <div class="row" ng-show="select2">
+					   <h3>{{option2}} Personality Review Insights for {{option1}}</h3>
+					 <div class="col-md-4">
+						<div id="container_author" ng-controller="mainController" ng-show="select2">Placeholder for chart</div>
+					   </div>
+		            <!--</div>-->
+		
+		                  <!--<div class="row" ng-show="select2">-->
+					   <div class="col-md-4">
+						<div id="container_author_needs" ng-controller="mainController" ng-show="select2">Placeholder for chart</div>
+						</div>
+					   <div class="col-md-4">
+						<div id="container_author_values" ng-controller="mainController" ng-show="select2">Placeholder for chart</div>
+						</div>
+					  
+		          </div>
+		
+	
+	
+	            <div class="row" ng-show="resultbulk">
+					 <div class="col-md-9">
+						<div id="containermain" ng-controller="mainController" ng-show="resultbulk">Placeholder for chart</div>
+						</div>
+		          </div>
+	
+	
+			<!--<div class="row" ng-show="resultbulk">
+				<h4>BIG FIVE TRAITS</h4>
+            <div class="col-md-4"> 
+                <div id="containerbulk1" ng-controller="mainController" ng-show="resultbulk">Placeholder for chart</div>  
+            </div>
+            
+            <div class="col-md-4">
+                
+                <div id="containerbulk2" ng-controller="mainController" ng-show="resultbulk">Placeholder for chart</div> 
+                
+            </div>
+           
+            <div class="col-md-4">
+                
+                <div id="containerbulk3" ng-controller="mainController" ng-show="resultbulk">Placeholder for chart</div> 
+
+			
+        </div>
+		
+		<div class="row" ng-show="resultbulk">
+				<h4>BIG FIVE TRAITS</h4>
+             <div class="col-md-5">
+                
+                <div id="containerbulk4" ng-controller="mainController" ng-show="resultbulk">Placeholder for chart</div> 
+
+            </div>
+			 <div class="col-md-5">
+                
+                <div id="containerbulk5" ng-controller="mainController" ng-show="resultbulk">Placeholder for chart</div> 
+
+            </div>
+		</div>-->
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Tansi Hede 2016</p>
+                </div>
+            </div>
+            <!-- /.row -->
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+   <!-- <script src="js/jquery.js"></script>
+-->
+    <!-- Bootstrap Core JavaScript -->
+  <!--  <script src="js/bootstrap.min.js"></script>
+	-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script type="text/javascript">
+	
+var app = angular.module('scotchTodo', []);
+app.controller('mainController',function($scope, $http,$rootScope) {
+$rootScope.AssignedDate = Date;
+$scope.createTodo = function() {
+	
+	
+	$scope.resultbulk = false;
+    $scope.select1 =false;
+    $scope.select2=false;
+	
+//alert("Entered here");
+  var params = { 'formData' : $scope.formData }
+  $http.post('/api/todos',params)
+            .success(function(sucess) {
+		 
+	$scope.result = sucess;
+	         
+	  if(sucess.Err)
+		  
+	  {   
+		  $scope.resulttext=false;
+		  $scope.word_count_message = sucess.Err.error;
+		  //console.log("-----Alert-----" + $scope.errmsg) ;
+	      return false;
+	  }
+	  
+	  
+	  $scope.word_count= sucess.word_count;
+	  $scope.word_count_message = sucess.word_count_message;
+	  //console.log(JSON.stringify(sucess));
+	 /* var Agreeableness = sucess.tree.children[0].children[0].children[0].percentage ;
+      var Openness=sucess.tree.children[0].children[0].children[4].percentage;
+	  var Openness1=sucess.tree.children[0].children[0].children[4].children[0].id;
+	  console.log("Agreeableness" + Agreeableness + "Openness" +Openness1 );*/
+	  $scope.resulttext =true;
+ 	  var needsData = JSON.stringify(sucess.tree.children[1].children[0].children);                
+      var valuesData = JSON.stringify(sucess.tree.children[2].children[0].children);
+            console.log(needsData   + "**" + valuesData);
+    // Create the chart
+    $('#container1').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'BIG FIVE'
+        },
+        subtitle: {
+            text: 'Click the slices to view different facets.'
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y:.1f}%'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        },
+        series: [{
+            name: 'BIG FIVE',
+            colorByPoint: true,
+            data: [{
+                name: sucess.tree.children[0].children[0].children[0].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[0].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[0].id
+				
+            }, {
+                name: sucess.tree.children[0].children[0].children[1].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[1].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[1].id
+            }, {
+                name:sucess.tree.children[0].children[0].children[2].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[2].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[2].id
+            }, {
+                name: sucess.tree.children[0].children[0].children[3].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[3].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[3].id
+            }, {
+                name: sucess.tree.children[0].children[0].children[4].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[4].percentage),
+				drilldown: sucess.tree.children[0].children[0].children[4].id
+            
+            }]
+        }],
+        drilldown: {
+            series: [{
+                name: sucess.tree.children[0].children[0].children[0].id, //openess
+                id: sucess.tree.children[0].children[0].children[0].id,
+                data: [
+                    [sucess.tree.children[0].children[0].children[0].children[0].id,sucess.tree.children[0].children[0].children[0].children[0].percentage],          [sucess.tree.children[0].children[0].children[0].children[1].id,sucess.tree.children[0].children[0].children[0].children[1].percentage],
+[sucess.tree.children[0].children[0].children[0].children[2].id,sucess.tree.children[0].children[0].children[0].children[2].percentage],		[sucess.tree.children[0].children[0].children[0].children[3].id,sucess.tree.children[0].children[0].children[0].children[3].percentage], [sucess.tree.children[0].children[0].children[0].children[4].id,sucess.tree.children[0].children[0].children[0].children[4].percentage],
+[sucess.tree.children[0].children[0].children[0].children[5].id,sucess.tree.children[0].children[0].children[0].children[5].percentage]
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[1].id,
+                id: sucess.tree.children[0].children[0].children[1].id,
+                data: [
+					
+					[sucess.tree.children[0].children[0].children[1].children[0].id,sucess.tree.children[0].children[0].children[1].children[0].percentage],          [sucess.tree.children[0].children[0].children[1].children[1].id,sucess.tree.children[0].children[0].children[1].children[1].percentage],
+[sucess.tree.children[0].children[0].children[1].children[2].id,sucess.tree.children[0].children[0].children[1].children[2].percentage],		[sucess.tree.children[0].children[0].children[1].children[3].id,sucess.tree.children[0].children[0].children[1].children[3].percentage], [sucess.tree.children[0].children[0].children[1].children[4].id,sucess.tree.children[0].children[0].children[1].children[4].percentage],
+[sucess.tree.children[0].children[0].children[1].children[5].id,sucess.tree.children[0].children[0].children[1].children[5].percentage]
+                    
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[2].id,
+                id: sucess.tree.children[0].children[0].children[2].id,
+                data: [
+                   [sucess.tree.children[0].children[0].children[2].children[0].id,sucess.tree.children[0].children[0].children[2].children[0].percentage],          [sucess.tree.children[0].children[0].children[2].children[1].id,sucess.tree.children[0].children[0].children[2].children[1].percentage],
+[sucess.tree.children[0].children[0].children[2].children[2].id,sucess.tree.children[0].children[0].children[2].children[2].percentage],		[sucess.tree.children[0].children[0].children[2].children[3].id,sucess.tree.children[0].children[0].children[2].children[3].percentage], [sucess.tree.children[0].children[0].children[2].children[4].id,sucess.tree.children[0].children[0].children[2].children[4].percentage],
+[sucess.tree.children[0].children[0].children[2].children[5].id,sucess.tree.children[0].children[0].children[2].children[5].percentage]
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[3].id,
+                id: sucess.tree.children[0].children[0].children[3].id,
+                data: [
+                    [sucess.tree.children[0].children[0].children[3].children[0].id,sucess.tree.children[0].children[0].children[3].children[0].percentage],          [sucess.tree.children[0].children[0].children[3].children[1].id,sucess.tree.children[0].children[0].children[3].children[1].percentage],
+[sucess.tree.children[0].children[0].children[3].children[2].id,sucess.tree.children[0].children[0].children[3].children[2].percentage],		[sucess.tree.children[0].children[0].children[3].children[3].id,sucess.tree.children[0].children[0].children[3].children[3].percentage], [sucess.tree.children[0].children[0].children[3].children[4].id,sucess.tree.children[0].children[0].children[3].children[4].percentage],
+[sucess.tree.children[0].children[0].children[3].children[5].id,sucess.tree.children[0].children[0].children[3].children[5].percentage]
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[4].id,
+                id: sucess.tree.children[0].children[0].children[4].id,
+                data: [
+                   [sucess.tree.children[0].children[0].children[4].children[0].id,sucess.tree.children[0].children[0].children[4].children[0].percentage],          [sucess.tree.children[0].children[0].children[4].children[1].id,sucess.tree.children[0].children[0].children[4].children[1].percentage],
+[sucess.tree.children[0].children[0].children[4].children[2].id,sucess.tree.children[0].children[0].children[4].children[2].percentage],		[sucess.tree.children[0].children[0].children[4].children[3].id,sucess.tree.children[0].children[0].children[4].children[3].percentage], [sucess.tree.children[0].children[0].children[4].children[4].id,sucess.tree.children[0].children[0].children[4].children[4].percentage],
+[sucess.tree.children[0].children[0].children[4].children[5].id,sucess.tree.children[0].children[0].children[4].children[5].percentage]
+                ]
+            }]
+        }
+    
+});
+	  
+	  /*-------------------Needs ---------------------------*/
+	  
+	   
+	  $('#container2').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Needs'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Needs',
+            colorByPoint: true,
+            data: [{
+                name: sucess.tree.children[1].children[0].children[0].id,
+                y: sucess.tree.children[1].children[0].children[0].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[1].id,
+                y: sucess.tree.children[1].children[0].children[1].percentage
+               
+            }, {
+                name: sucess.tree.children[1].children[0].children[2].id,
+                y: sucess.tree.children[1].children[0].children[2].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[3].id,
+                y: sucess.tree.children[1].children[0].children[3].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[4].id,
+                y: sucess.tree.children[1].children[0].children[4].percentage
+            },
+			{
+                name: sucess.tree.children[1].children[0].children[5].id,
+                y: sucess.tree.children[1].children[0].children[5].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[6].id,
+                y: sucess.tree.children[1].children[0].children[6].percentage
+               
+            }, {
+                name: sucess.tree.children[1].children[0].children[7].id,
+                y: sucess.tree.children[1].children[0].children[7].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[8].id,
+                y: sucess.tree.children[1].children[0].children[8].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[9].id,
+                y: sucess.tree.children[1].children[0].children[9].percentage
+            },{
+                name: sucess.tree.children[1].children[0].children[10].id,
+                y: sucess.tree.children[1].children[0].children[10].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[11].id,
+                y: sucess.tree.children[1].children[0].children[11].percentage
+            }]
+        }]
+    });
+	  /*-------------------Values -----------------------*/
+	  
+	  
+	  
+	  $('#container3').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Values'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Values',
+            colorByPoint: true,
+            data: [{
+                name: sucess.tree.children[2].children[0].children[0].id,
+                y: sucess.tree.children[2].children[0].children[0].percentage
+            }, {
+                name: sucess.tree.children[2].children[0].children[1].id,
+                y: sucess.tree.children[2].children[0].children[1].percentage
+               
+            }, {
+                name: sucess.tree.children[2].children[0].children[2].id,
+                y: sucess.tree.children[2].children[0].children[2].percentage
+            }, {
+                name: sucess.tree.children[2].children[0].children[3].id,
+                y: sucess.tree.children[2].children[0].children[3].percentage
+            }, {
+                name: sucess.tree.children[2].children[0].children[4].id,
+                y: sucess.tree.children[2].children[0].children[4].percentage
+            }]
+        }]
+    });
+	  
+	 
+	  
+}).error(function(data,status){
+				console.log('Error into url '+JSON.stringify(data));
+			});
+
+
+}
+	   
+      // when submitting the add form, send the text to the node API
+    $scope.createTodobulk = function() {
+   
+       // alert("hitting bulk");
+        $http.get('/api/todos')
+            .success(function(sucess) {
+             
+			 $scope.resulttext=false;
+			 $scope.select1=false;
+			 $scope.select2=false;
+             $scope.resultbulk = true;
+			 
+			
+            $scope.mydatabulk = sucess.resavg; //get responses
+            $scope.movie_ids = sucess.movie_ids;
+            $scope.sorted_avg = sucess.sorted_avg;
+			
+			$scope.open = sucess.sorted_avg[0].key;   //fetch 5 traits
+			$scope.consious=sucess.sorted_avg[1].key;
+			$scope.aggreable=sucess.sorted_avg[2].key;      
+			$scope.extraversion=sucess.sorted_avg[3].key;
+			$scope.neuro=  sucess.sorted_avg[4].key;
+			
+			$scope.open1 = sucess.sorted_avg[0].value[0].key; //topmost movie in openess
+			$scope.open2 = sucess.sorted_avg[0].value[1].key;
+			$scope.consious1=sucess.sorted_avg[1].value[0].key; 
+			$scope.consious2=sucess.sorted_avg[1].value[1].key;
+			$scope.aggreable1=sucess.sorted_avg[2].value[0].key;  
+			$scope.aggreable2=sucess.sorted_avg[2].value[1].key; 
+			$scope.extraversion1=sucess.sorted_avg[3].value[0].key;
+			$scope.extraversion2=sucess.sorted_avg[3].value[1].key;
+			$scope.neuro1=  sucess.sorted_avg[4].value[0].key;
+			$scope.neuro2=  sucess.sorted_avg[4].value[1].key;
+			/*
+			console.log(sucess.sorted_avg[0].key);
+            console.log(sucess.sorted_avg[0].value[0].key +""+ sucess.sorted_avg[0].value[0].value);
+            console.log(sucess.sorted_avg[0].value[1].key +""+ sucess.sorted_avg[0].value[1].value);
+            console.log(sucess.sorted_avg[0].value[2].key +""+ sucess.sorted_avg[0].value[2].value);
+			*/
+			
+            console.log(JSON.stringify(sucess.resavg[0][0].Movie)   + "-------------------------"  + JSON.stringify(sucess.resavg[0][0].Pi.Opennes));
+			console.log(JSON.stringify(sucess.resavg[1][0].Movie)   + "-------------------------"  + JSON.stringify(sucess.resavg[1][0].Pi.Opennes));
+			
+			
+		
+    $('#containermain').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Movie Average Reviews'
+        },
+        xAxis: {
+            categories: [
+                sucess.resavg[0][0].Movie,
+                sucess.resavg[1][0].Movie,
+                sucess.resavg[2][0].Movie,
+                sucess.resavg[3][0].Movie,
+                sucess.resavg[4][0].Movie
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Big 5 (percentage)'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.2f} %</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'Openness',
+            data: [sucess.resavg[0][0].Pi.Opennes, sucess.resavg[1][0].Pi.Opennes, sucess.resavg[2][0].Pi.Opennes, sucess.resavg[3][0].Pi.Opennes, sucess.resavg[4][0].Pi.Opennes]
+
+        }, {
+            name: 'Conscientiousness',
+            data: [sucess.resavg[0][0].Pi.Conscientiousness, sucess.resavg[1][0].Pi.Conscientiousness, sucess.resavg[2][0].Pi.Conscientiousness, sucess.resavg[3][0].Pi.Conscientiousness, sucess.resavg[4][0].Pi.Conscientiousness]
+
+        }, {
+            name: 'Extraversion',
+            data: [sucess.resavg[0][0].Pi.Extraversion, sucess.resavg[1][0].Pi.Extraversion, sucess.resavg[2][0].Pi.Extraversion, sucess.resavg[3][0].Pi.Extraversion, sucess.resavg[4][0].Pi.Extraversion]
+
+        }, {
+            name: 'Agreeableness',
+            data: [sucess.resavg[0][0].Pi.Agreeableness, sucess.resavg[1][0].Pi.Agreeableness, sucess.resavg[2][0].Pi.Agreeableness, sucess.resavg[3][0].Pi.Agreeableness, sucess.resavg[4][0].Pi.Agreeableness]
+
+        },{
+            name: 'Neuroticism',
+            data: [sucess.resavg[0][0].Pi.Neuroticism, sucess.resavg[1][0].Pi.Neuroticism, sucess.resavg[2][0].Pi.Neuroticism, sucess.resavg[3][0].Pi.Neuroticism, sucess.resavg[4][0].Pi.Neuroticism]
+        },
+		
+		]
+    });
+
+			//********************************************************************************
+			  $('#containerbulk1').highcharts({
+	chart: {
+		type: 'pie',
+		options3d: {
+			enabled: true,
+			alpha: 45
+		}
+	},
+	title: {
+		text:  sucess.resavg[0][0].Movie
+	},
+	subtitle: {
+		text: 'BIG 5 VALUES'
+	},
+	plotOptions: {
+		pie: {
+			innerSize: 100,
+			depth: 45
+		}
+	},
+	series: [{
+		name: 'Probability',
+		data: [
+			['Openness', parseFloat(sucess.resavg[0][0].Pi.Opennes)],
+			['Conscientiousness', parseFloat(sucess.resavg[0][0].Pi.Conscientiousness)],
+			['Extraversion', parseFloat(sucess.resavg[0][0].Pi.Extraversion)],
+			['Agreeableness', parseFloat(sucess.resavg[0][0].Pi.Agreeableness)],
+			['Neuroticism', parseFloat(sucess.resavg[0][0].Pi.Neuroticism)]
+
+
+		]
+	}]
+});
+   /* ---------------------------------------*/
+		  $('#containerbulk2').highcharts({
+	chart: {
+		type: 'pie',
+		options3d: {
+			enabled: true,
+			alpha: 45
+		}
+	},
+	title: {
+		text:  sucess.resavg[1][0].Movie
+	},
+	subtitle: {
+		text: 'BIG 5 VALUES'
+	},
+	plotOptions: {
+		pie: {
+			innerSize: 100,
+			depth: 45
+		}
+	},
+	series: [{
+		name: 'Probability',
+		data: [
+			['Openness', parseFloat(sucess.resavg[1][0].Pi.Opennes)],
+			['Conscientiousness', parseFloat(sucess.resavg[1][0].Pi.Conscientiousness)],
+			['Extraversion', parseFloat(sucess.resavg[1][0].Pi.Extraversion)],
+			['Agreeableness', parseFloat(sucess.resavg[1][0].Pi.Agreeableness)],
+			['Neuroticism', parseFloat(sucess.resavg[1][0].Pi.Neuroticism)]
+
+
+		]
+	}]
+});
+   /* -----------------------------------------------*/
+		  $('#containerbulk3').highcharts({
+	chart: {
+		type: 'pie',
+		options3d: {
+			enabled: true,
+			alpha: 45
+		}
+	},
+	title: {
+		text:  sucess.resavg[2][0].Movie
+	},
+	subtitle: {
+		text: 'BIG 5 VALUES'
+	},
+	plotOptions: {
+		pie: {
+			innerSize: 100,
+			depth: 45
+		}
+	},
+	series: [{
+		name: 'Probability',
+		data: [
+			['Openness', parseFloat(sucess.resavg[2][0].Pi.Opennes)],
+			['Conscientiousness', parseFloat(sucess.resavg[2][0].Pi.Conscientiousness)],
+			['Extraversion', parseFloat(sucess.resavg[2][0].Pi.Extraversion)],
+			['Agreeableness', parseFloat(sucess.resavg[2][0].Pi.Agreeableness)],
+			['Neuroticism', parseFloat(sucess.resavg[2][0].Pi.Neuroticism)]
+
+
+		]
+	}]
+});
+    /*-----------------------------------------------*/
+		  $('#containerbulk4').highcharts({
+	chart: {
+		type: 'pie',
+		options3d: {
+			enabled: true,
+			alpha: 45
+		}
+	},
+	title: {
+		text:  sucess.resavg[3][0].Movie
+	},
+	subtitle: {
+		text: 'BIG 5 VALUES'
+	},
+	plotOptions: {
+		pie: {
+			innerSize: 100,
+			depth: 45
+		}
+	},
+	series: [{
+		name: 'Probability',
+		data: [
+			['Openness', parseFloat(sucess.resavg[3][0].Pi.Opennes)],
+			['Conscientiousness', parseFloat(sucess.resavg[3][0].Pi.Conscientiousness)],
+			['Extraversion', parseFloat(sucess.resavg[3][0].Pi.Extraversion)],
+			['Agreeableness', parseFloat(sucess.resavg[3][0].Pi.Agreeableness)],
+			['Neuroticism', parseFloat(sucess.resavg[3][0].Pi.Neuroticism)]
+
+
+		]
+	}]
+});
+    /*-------------------------------------------------------------*/
+		  $('#containerbulk5').highcharts({
+	chart: {
+		type: 'pie',
+		options3d: {
+			enabled: true,
+			alpha: 45
+		}
+	},
+	title: {
+		text:   sucess.resavg[4][0].Movie
+	},
+	subtitle: {
+		text: 'BIG 5 VALUES'
+	},
+	plotOptions: {
+		pie: {
+			innerSize: 100,
+			depth: 45
+		}
+	},
+	series: [{
+		name: 'Probability',
+		data: [
+			['Openness', parseFloat(sucess.resavg[4][0].Pi.Opennes)],
+			['Conscientiousness', parseFloat(sucess.resavg[4][0].Pi.Conscientiousness)],
+			['Extraversion', parseFloat(sucess.resavg[4][0].Pi.Extraversion)],
+			['Agreeableness', parseFloat(sucess.resavg[4][0].Pi.Agreeableness)],
+			['Neuroticism', parseFloat(sucess.resavg[4][0].Pi.Neuroticism)]
+
+
+		]
+	}]
+});
+  /*  --------*/
+            
+            
+ 
+            })
+            .error(function(sucess) {
+                console.log('Error: ' + sucess);
+            });
+    };
+
+	
+	$scope.loadData = function(){
+     $http.get('/api/listDrpdwn')
+        .success(function(data) {
+        //  alert("fill table");
+		
+            $scope.movies = data.arrlistmovies;
+         
+             console.log(JSON.stringify($scope.movie));
+		    $scope.movie_authors = data.arrlistauthors;
+            $scope.moviearry = data.moviearry; 
+		 
+		   $scope.options1 = data.arrlistmovies;
+           $scope.options2 = []; // we'll get these later
+           $scope.getOptions2 = function(){
+        // just some silly stuff to get the key of what was selected since we are using simple arrays.
+        var key = $scope.options1.indexOf($scope.option1);
+        // Here you could actually go out and fetch the options for a server.
+        var myNewOptions = data.moviearry[key];
+        // Now set the options.
+        // If you got the results from a server, this would go in the callback
+        $scope.options2 = myNewOptions;
+    };
+		 
+		 
+        })
+        .error(function(data) {
+            console.log('Error: ' + data);
+        });
+    
+    };
+    
+   
+	$scope.loadData();
+	
+	//function called on review change
+	$scope.getReview=function(){
+	    
+		 $scope.select2 = true;
+		$scope.select1 = false;
+		$scope.resultbulk =false;
+		$scope.resulttext=false;
+	   // alert("Author chnaged");
+		var author = $scope.option2;
+		var movienm = $scope.option1;
+		//alert('selected Author' + author + 'Selcted movie' + movienm);
+		
+		  $http.get('/api/getbyreviewid?author='+author + '&movienm=' + movienm)
+             .success(function(sucess) {
+			 
+                
+			$scope.result = sucess;
+			$('#container_author').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Big five' 
+        },
+        subtitle: {
+            text: 'Click the slices to view different facets.'
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y:.1f}%'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        },
+        series: [{
+            name: 'BIG FIVE',
+            colorByPoint: true,
+            data: [{
+                name: sucess.tree.children[0].children[0].children[0].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[0].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[0].id
+				
+            }, {
+                name: sucess.tree.children[0].children[0].children[1].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[1].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[1].id
+            }, {
+                name:sucess.tree.children[0].children[0].children[2].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[2].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[2].id
+            }, {
+                name: sucess.tree.children[0].children[0].children[3].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[3].percentage),
+                drilldown: sucess.tree.children[0].children[0].children[3].id
+            }, {
+                name: sucess.tree.children[0].children[0].children[4].id,
+                y: parseFloat(sucess.tree.children[0].children[0].children[4].percentage),
+				drilldown: sucess.tree.children[0].children[0].children[4].id
+            
+            }]
+        }],
+        drilldown: {
+            series: [{
+                name: sucess.tree.children[0].children[0].children[0].id, //openess
+                id: sucess.tree.children[0].children[0].children[0].id,
+                data: [
+                    [sucess.tree.children[0].children[0].children[0].children[0].id,sucess.tree.children[0].children[0].children[0].children[0].percentage],          [sucess.tree.children[0].children[0].children[0].children[1].id,sucess.tree.children[0].children[0].children[0].children[1].percentage],
+[sucess.tree.children[0].children[0].children[0].children[2].id,sucess.tree.children[0].children[0].children[0].children[2].percentage],		[sucess.tree.children[0].children[0].children[0].children[3].id,sucess.tree.children[0].children[0].children[0].children[3].percentage], [sucess.tree.children[0].children[0].children[0].children[4].id,sucess.tree.children[0].children[0].children[0].children[4].percentage],
+[sucess.tree.children[0].children[0].children[0].children[5].id,sucess.tree.children[0].children[0].children[0].children[5].percentage]
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[1].id,
+                id: sucess.tree.children[0].children[0].children[1].id,
+                data: [
+					
+					[sucess.tree.children[0].children[0].children[1].children[0].id,sucess.tree.children[0].children[0].children[1].children[0].percentage],          [sucess.tree.children[0].children[0].children[1].children[1].id,sucess.tree.children[0].children[0].children[1].children[1].percentage],
+[sucess.tree.children[0].children[0].children[1].children[2].id,sucess.tree.children[0].children[0].children[1].children[2].percentage],		[sucess.tree.children[0].children[0].children[1].children[3].id,sucess.tree.children[0].children[0].children[1].children[3].percentage], [sucess.tree.children[0].children[0].children[1].children[4].id,sucess.tree.children[0].children[0].children[1].children[4].percentage],
+[sucess.tree.children[0].children[0].children[1].children[5].id,sucess.tree.children[0].children[0].children[1].children[5].percentage]
+                    
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[2].id,
+                id: sucess.tree.children[0].children[0].children[2].id,
+                data: [
+                   [sucess.tree.children[0].children[0].children[2].children[0].id,sucess.tree.children[0].children[0].children[2].children[0].percentage],          [sucess.tree.children[0].children[0].children[2].children[1].id,sucess.tree.children[0].children[0].children[2].children[1].percentage],
+[sucess.tree.children[0].children[0].children[2].children[2].id,sucess.tree.children[0].children[0].children[2].children[2].percentage],		[sucess.tree.children[0].children[0].children[2].children[3].id,sucess.tree.children[0].children[0].children[2].children[3].percentage], [sucess.tree.children[0].children[0].children[2].children[4].id,sucess.tree.children[0].children[0].children[2].children[4].percentage],
+[sucess.tree.children[0].children[0].children[2].children[5].id,sucess.tree.children[0].children[0].children[2].children[5].percentage]
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[3].id,
+                id: sucess.tree.children[0].children[0].children[3].id,
+                data: [
+                    [sucess.tree.children[0].children[0].children[3].children[0].id,sucess.tree.children[0].children[0].children[3].children[0].percentage],          [sucess.tree.children[0].children[0].children[3].children[1].id,sucess.tree.children[0].children[0].children[3].children[1].percentage],
+[sucess.tree.children[0].children[0].children[3].children[2].id,sucess.tree.children[0].children[0].children[3].children[2].percentage],		[sucess.tree.children[0].children[0].children[3].children[3].id,sucess.tree.children[0].children[0].children[3].children[3].percentage], [sucess.tree.children[0].children[0].children[3].children[4].id,sucess.tree.children[0].children[0].children[3].children[4].percentage],
+[sucess.tree.children[0].children[0].children[3].children[5].id,sucess.tree.children[0].children[0].children[3].children[5].percentage]
+                ]
+            }, {
+                name: sucess.tree.children[0].children[0].children[4].id,
+                id: sucess.tree.children[0].children[0].children[4].id,
+                data: [
+                   [sucess.tree.children[0].children[0].children[4].children[0].id,sucess.tree.children[0].children[0].children[4].children[0].percentage],          [sucess.tree.children[0].children[0].children[4].children[1].id,sucess.tree.children[0].children[0].children[4].children[1].percentage],
+[sucess.tree.children[0].children[0].children[4].children[2].id,sucess.tree.children[0].children[0].children[4].children[2].percentage],		[sucess.tree.children[0].children[0].children[4].children[3].id,sucess.tree.children[0].children[0].children[4].children[3].percentage], [sucess.tree.children[0].children[0].children[4].children[4].id,sucess.tree.children[0].children[0].children[4].children[4].percentage],
+[sucess.tree.children[0].children[0].children[4].children[5].id,sucess.tree.children[0].children[0].children[4].children[5].percentage]
+                ]
+            }]
+        }
+    
+});
+	    /*-------------------Needs ---------------------------*/
+	  
+	   
+	  $('#container_author_needs').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Needs'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Needs',
+            colorByPoint: true,
+            data: [{
+                name: sucess.tree.children[1].children[0].children[0].id,
+                y: sucess.tree.children[1].children[0].children[0].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[1].id,
+                y: sucess.tree.children[1].children[0].children[1].percentage
+               
+            }, {
+                name: sucess.tree.children[1].children[0].children[2].id,
+                y: sucess.tree.children[1].children[0].children[2].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[3].id,
+                y: sucess.tree.children[1].children[0].children[3].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[4].id,
+                y: sucess.tree.children[1].children[0].children[4].percentage
+            },
+			{
+                name: sucess.tree.children[1].children[0].children[5].id,
+                y: sucess.tree.children[1].children[0].children[5].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[6].id,
+                y: sucess.tree.children[1].children[0].children[6].percentage
+               
+            }, {
+                name: sucess.tree.children[1].children[0].children[7].id,
+                y: sucess.tree.children[1].children[0].children[7].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[8].id,
+                y: sucess.tree.children[1].children[0].children[8].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[9].id,
+                y: sucess.tree.children[1].children[0].children[9].percentage
+            },{
+                name: sucess.tree.children[1].children[0].children[10].id,
+                y: sucess.tree.children[1].children[0].children[10].percentage
+            }, {
+                name: sucess.tree.children[1].children[0].children[11].id,
+                y: sucess.tree.children[1].children[0].children[11].percentage
+            }]
+        }]
+    });
+	  /*-------------------Values -----------------------*/
+	  
+	  
+	  
+	  $('#container_author_values').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Values'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Values',
+            colorByPoint: true,
+            data: [{
+                name: sucess.tree.children[2].children[0].children[0].id,
+                y: sucess.tree.children[2].children[0].children[0].percentage
+            }, {
+                name: sucess.tree.children[2].children[0].children[1].id,
+                y: sucess.tree.children[2].children[0].children[1].percentage
+               
+            }, {
+                name: sucess.tree.children[2].children[0].children[2].id,
+                y: sucess.tree.children[2].children[0].children[2].percentage
+            }, {
+                name: sucess.tree.children[2].children[0].children[3].id,
+                y: sucess.tree.children[2].children[0].children[3].percentage
+            }, {
+                name: sucess.tree.children[2].children[0].children[4].id,
+                y: sucess.tree.children[2].children[0].children[4].percentage
+            }]
+        }]
+    }); 
+            })
+            .error(function(sucess) {
+                console.log('Error: ' + sucess);
+            });
+	
+	}
+	
+	
+	$scope.getValue=function(){
+	    $scope.select1 = true;
+		$scope.select2 = false;
+		$scope.resultbulk =false;
+		$scope.resulttext=false;
+	   
+	
+		var movie_val = $scope.movie;
+		//alert('selected' + movie_val);
+	
+        $http.get('/api/getbyid/'+movie_val)
+            .success(function(sucess) {
+                
+			$scope.result = sucess.resavg;
+			
+        $('#container').highcharts({
+	chart: {
+		type: 'pie',
+		options3d: {
+			enabled: true,
+			alpha: 45
+		}
+	},
+	title: {
+		text: 'Personality Insights for ' +  sucess.resavg[0].Movie
+	},
+	subtitle: {
+		text: 'BIG 5 MODEL'
+	},
+	plotOptions: {
+		pie: {
+			innerSize: 100,
+			depth: 45
+		}
+	},
+	series: [{
+		name: 'Probability',
+		data: [
+			['Openness', parseFloat(sucess.resavg[0].Pi.Opennes)],
+			['Conscientiousness', parseFloat(sucess.resavg[0].Pi.Conscientiousness)],
+			['Extraversion', parseFloat(sucess.resavg[0].Pi.Extraversion)],
+			['Agreeableness', parseFloat(sucess.resavg[0].Pi.Agreeableness)],
+			['Neuroticism', parseFloat(sucess.resavg[0].Pi.Neuroticism)]
+
+
+		]
+	}]
+});
+    
+            })
+            .error(function(sucess) {
+                console.log('Error: ' + sucess);
+            });
+    }
+	
+	 
+	}); //closing of controller
+	
+</script>
+	
+</body>
+
+</html>

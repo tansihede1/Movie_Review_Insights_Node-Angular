@@ -1,0 +1,22 @@
+hit bulk data api
+[ { Name: 'Baar_Baar_Dekho',
+    Data: [ [Object], [Object], [Object] ] },
+  { Name: 'XYZ', Data: [ [Object], [Object], [Object] ] },
+  { Name: 'TANGO', Data: [ [Object], [Object], [Object] ] },
+  { Name: 'XMAN', Data: [ [Object], [Object], [Object] ] },
+  { Name: 'TIME', Data: [ [Object], [Object], [Object] ] } ]
+--------------Blog Information --------
+inside for
+inside for
+inside for
+inside for
+inside for
+[ { id: 'Baar_Baar_Dekho',
+    Posts: [ [Object], [Object], [Object] ] },
+  { id: 'XYZ', Posts: [ [Object], [Object], [Object] ] },
+  { id: 'TANGO', Posts: [ [Object], [Object], [Object] ] },
+  { id: 'XMAN', Posts: [ [Object], [Object], [Object] ] },
+  { id: 'TIME', Posts: [ [Object], [Object], [Object] ] } ]
+5
+2
+server starting on port 3000
