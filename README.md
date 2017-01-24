@@ -48,4 +48,4 @@ The application uses Node.js and npm so you will have to download and install th
     7. Go to http://localhost:3004
 
 
-![Movie-Review-Insights](http://imgur.com/a/lo0EC)
+![Movie-Review-Insights](http://i.imgur.com/a/lo0EC.png)
