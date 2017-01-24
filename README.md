@@ -1,6 +1,6 @@
 # Movie Review Insights
 
-A Movie Review Insights is built with node.js,Angular,jQuery and IBM Watson Personality Insights Service, For demonstration purposes and a tutorial.
+A Movie Review Insights is built with Node.js,Angular JS,Bootstrap,JQuery and IBM Watson Personality Insights Service, For demonstration purposes and a tutorial.
 
 Node provides the RESTful API. Angular provides the frontend and accesses the API.
 
